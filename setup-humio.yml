@@ -3,6 +3,6 @@
   become: true
   roles:
     - role: humio.java
-    - role: AnsibleShipyard.ansible-zookeeper
+    - role: humio.zookeeper
     - role: humio.kafka
     - role: humio.server
