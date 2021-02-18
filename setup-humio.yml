@@ -4,7 +4,7 @@
   roles:
     - role: humio.java
 
-    - role: AnsibleShipyard.ansible-zookeeper
+    - role: humio.zookeeper
       zookeeper_version: 3.4.14
       zookeeper_url: http://archive.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
 

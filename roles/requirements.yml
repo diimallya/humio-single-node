@@ -1,6 +1,6 @@
 - src: humio.java
 
-- src: AnsibleShipyard.ansible-zookeeper
+- src: humio.zookeeper
 
 - src: humio.kafka
 
