@@ -1,0 +1,14 @@
+---
+- name: add Azul Systems Java yum repository
+  yum_repository:
+    name: zulu
+    description: zulu-$releasever - Azul Systems Inc., Zulu packages for $basearch
+    baseurl: http://repos.azulsystems.com/rhel/$releasever/$basearch
+    gpgkey: http://repos.azulsystems.com/RPM-GPG-KEY-azulsystems
+    gpgcheck: yes
+    protect: yes
+
+- name: install JDK via yum
+  yum:
+    name: zulu-{{ redhat_java_major_version }}-{{ redhat_java_zulu_version }}
+    update_cache: yes

@@ -1,0 +1,31 @@
+---
+- name: add Azul Systems Java apt key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 27BC0C8CB3D81623F59BDADCB1998361219BD9C9
+
+- name: add Azul Systems Java apt repository
+  apt_repository:
+    repo: deb http://repos.azulsystems.com/{{ ansible_distribution|lower }} stable main
+    state: present
+
+- name: install JDK via apt
+  apt:
+    name: zulu-{{ java_major_version }}={{ java_zulu_version }}
+    update_cache: yes
+
+- name: Pin zulu-11 version
+  copy:
+    dest: "/etc/apt/preferences.d/zulu11"
+    content: |
+      Package: zulu-11
+      Pin: version 11.2+3
+      Pin-Priority: 550
+
+- name: Pin zulu-13 version
+  copy:
+    dest: "/etc/apt/preferences.d/zulu13"
+    content: |
+      Package: zulu-13
+      Pin: version 13.33+25-2
+      Pin-Priority: 550

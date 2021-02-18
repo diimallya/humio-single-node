@@ -1,0 +1,8 @@
+- hosts: all
+  remote_user: root
+  become: true
+  roles:
+    - role: humio.java
+    - role: AnsibleShipyard.ansible-zookeeper
+    - role: humio.kafka
+    - role: humio.server
