@@ -2,12 +2,9 @@
   remote_user: root
   become: true
   roles:
-    - role: humio.java
+    - role: roles/humio.java    
+    - role: roles/dk.zookeeper
+    - role: roles/dk.kafka
+    - role: roles/dk.humio
 
-    - role: humio.zookeeper
-      zookeeper_version: 3.4.14
-      zookeeper_url: http://archive.apache.org/dist/zookeeper/zookeeper-{{zookeeper_version}}/zookeeper-{{zookeeper_version}}.tar.gz
-
-    - role: humio.kafka
     
-    - role: humio.server

@@ -1,0 +1,12 @@
+---
+# defaults file for dk.humio
+humio_mirror: https://repo.humio.com/repository/maven-public
+humio_version: 1.20.1
+
+humio_conf_dirs: /etc/humio
+humio_filebeat_dirs: /etc/humio/filebeat
+humio_work_dirs: /var/humio
+humio_data_dirs: /var/humio/data
+humio_log_dirs: /var/log/humio
+humio_dirs: /opt/humio
+

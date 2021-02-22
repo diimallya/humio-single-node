@@ -1,0 +1,8 @@
+---
+# defaults file for dk.zookeeper
+
+zookeeper_version: 3.4.14
+zookeeper_url: http://archive.apache.org/dist/zookeeper/zookeeper-{{ zookeeper_version }}/zookeeper-{{ zookeeper_version }}.tar.gz
+
+zookeeper_data_dirs: /var/zookeeper/data
+ 

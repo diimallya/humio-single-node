@@ -1,0 +1,8 @@
+---
+# handlers file for dk.humio
+- name: Restart humio SystemD service
+  service:
+    name: humio
+    daemon_reload: yes
+    state: restarted
+  listen: Restart humio

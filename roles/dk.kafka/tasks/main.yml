@@ -1,0 +1,75 @@
+---
+# tasks file for dk.kafka
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+
+- name: Upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: create kafka group
+  group: 
+    name: kafka 
+    system: true
+
+- name: create kafka user
+  user: 
+    name: kafka 
+    group: kafka
+    system: true
+
+- name: Download and unzip kafka in /opt/
+  unarchive:
+    src: "{{ kafka_mirror }}/{{ kafka_version }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz"
+    dest: "/opt/"
+    remote_src: yes
+    creates: "/opt/kafka_{{ kafka_scala_version }}-{{ kafka_version }}"
+    owner: kafka
+    group: kafka
+
+
+- name: "Create required log and data directories for kafka. Creating {{ kafka_log_dirs }} and {{ kafka_data_dirs }}"
+  file:
+    name: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: kafka
+    group: kafka
+  loop: 
+    - "{{ kafka_log_dirs }}"
+    - "{{ kafka_data_dirs }}"
+
+- name: "Create symbolic link to from /opt/kafka_{{ kafka_scala_version }}-{{ kafka_version }} to /opt/kafka/"
+  file:
+    src: "/opt/kafka_{{ kafka_scala_version }}-{{ kafka_version }}"
+    dest: "/opt/kafka"
+    state: link
+    force: yes
+  notify: Restart Kafka
+
+- name: Create Kafka configuration file in /opt/kafka/config/server.properties
+  template:
+    src: "server.properties.j2"
+    dest: /opt/kafka/config/server.properties
+    mode: 0644
+    owner: kafka
+    group: kafka
+  notify: Restart Kafka
+
+- name: Create Kafka SystemD unit configuration in /etc/systemd/system/kafka.service
+  template:
+    src: "kafka.service.j2"
+    dest: /etc/systemd/system/kafka.service
+    mode: 0644
+  notify: Restart Kafka
+
+- name: Enable and start Kafka Service
+  service:
+    name: "kafka"
+    enabled: yes
+    daemon_reload: yes
+    state: started
+

@@ -1,0 +1,65 @@
+- name: Uninstall humio, kafka and zookeeper services
+  hosts: all
+  remote_user: root
+  vars:
+    kafka_log_dirs: "/var/log/kafka"
+    kafka_data_dirs: "/var/kafka-data"
+    zookeeper_data_dirs: "/var/zookeeper/data"
+    humio_conf_dirs: /etc/humio
+    humio_filebeat_dirs: /etc/humio/filebeat
+    humio_data_dirs: /var/humio/data
+    humio_log_dirs: /var/log/humio
+    humio_dirs: /opt/humio
+  tasks:
+    - name: Stop and disable humio kafka and zookeeper service
+      service:
+        name: "{{ item }}"
+        enabled: no
+        state: stopped
+      loop:
+        - humio
+        - kafka
+        - zookeeper
+
+    - name: Remove data log and config directories
+      file:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ humio_conf_dirs }}"
+        - "{{ humio_filebeat_dirs }}"
+        - "{{ humio_data_dirs }}"
+        - "{{ humio_log_dirs }}"
+        - "{{ humio_dirs }}"
+        - "{{ kafka_log_dirs }}"
+        - "{{ kafka_data_dirs }}"
+        - "{{ zookeeper_data_dirs }}"
+        - "/opt/kafka"
+        - "/opt/zookeeper"
+
+    - name: Remove service files from /etc/systemd/system
+      file:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - "/etc/systemd/system/humio.service"
+        - "/etc/systemd/system/kafka.service"
+        - "/etc/systemd/system/zookeeper.service"
+
+    - name: Remove humio kafka and zookeeper users
+      user: 
+        name: "{{ item }}"
+        state: absent
+      loop:
+         - kafka
+         - zookeeper
+         - humio
+    
+    - name: Remove humio kafka and zookeeper groups
+      group:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - kafka
+        - zookeeper
+        - humio

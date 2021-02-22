@@ -1,0 +1,68 @@
+---
+# tasks file for dk.humio
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+
+- name: Upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: create humio group
+  group: 
+    name: humio 
+    system: true
+
+- name: create humio user
+  user: 
+    name: humio 
+    group: humio
+    shell: /bin/false
+    system: true
+
+- name: "Create required directories for humio."
+  file:
+    name: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: humio
+    group: humio
+  loop: 
+    - "{{ humio_conf_dirs }}"
+    - "{{ humio_filebeat_dirs }}"
+    - "{{ humio_work_dirs }}"
+    - "{{ humio_data_dirs }}"
+    - "{{ humio_log_dirs }}"
+    - "{{ humio_dirs }}"
+
+- name: Download humio jar in /opt/humio/
+  get_url:
+    url: "{{ humio_mirror }}/com/humio/server/{{ humio_version }}/server-{{ humio_version }}.jar"
+    dest: "/opt/humio/server-{{ humio_version }}.jar"
+
+- name: "Create symbolic link to from /opt/humio/server-{{ humio_version }}.jar to /opt/humio/server.jar"
+  file:
+    src: "/opt/humio/server-{{ humio_version }}.jar"
+    dest: "/opt/humio/server.jar"
+    state: link
+
+- name: "Create humio configuration file in {{ humio_conf_dirs }}"
+  template:
+    src: "server.conf.j2"
+    dest: "{{ humio_conf_dirs }}/server.conf"
+
+- name: Create humio SystemD unit configuration in /etc/systemd/system/humio.service
+  template:
+    src: "humio.service.j2"
+    dest: /etc/systemd/system/humio.service
+  notify: Restart humio
+
+- name: Enable and start humio service
+  service:
+    name: "humio"
+    enabled: yes
+    daemon_reload: yes
+    state: started
+

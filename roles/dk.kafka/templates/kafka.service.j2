@@ -1,0 +1,16 @@
+[Unit]
+Requires=zookeeper.service
+After=zookeeper.service
+
+[Service]
+Type=simple
+User=kafka
+LimitNOFILE=800000
+Environment="LOG_DIR={{ kafka_log_dirs }}"
+Environment="GC_LOG_ENABLED=true"
+Environment="KAFKA_HEAP_OPTS=-Xms512M -Xmx4G"
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

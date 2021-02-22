@@ -1,0 +1,93 @@
+---
+# tasks file for dk.zookeeper
+- name: Update all packages to their latest version
+  apt:
+    name: "*"
+    state: latest
+
+- name: Upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: create zookeeper group
+  group: 
+    name: zookeeper 
+    system: true
+
+- name: create zookeeper user
+  user: 
+    name: zookeeper 
+    group: zookeeper
+    system: true
+
+- name: Download and unzip zookeeper in /opt/
+  unarchive:
+    src: "{{ zookeeper_url }}"
+    dest: "/opt/"
+    remote_src: yes
+    creates: "/opt/zookeeper-{{ zookeeper_version }}"
+    owner: zookeeper
+    group: zookeeper
+
+- name: "Create required data directory for zookeeper. Creating {{ zookeeper_data_dirs }}"
+  file:
+    name: "{{ zookeeper_data_dirs }}"
+    state: directory
+    recurse: yes
+    owner: zookeeper
+    group: zookeeper
+
+- name: "Create symbolic link to from /opt/zookeeper-{{ zookeeper_version }} to /opt/zookeeper"
+  file:
+    src: "/opt/zookeeper-{{ zookeeper_version }}"
+    dest: "/opt/zookeeper"
+    state: link
+    force: yes
+  notify: Restart zookeeper
+
+- name: "Create myid file in {{ zookeeper_data_dirs }}"
+  file:
+    name: "{{ zookeeper_data_dirs }}/myid"
+    state: touch
+    owner: zookeeper
+    group: zookeeper
+
+- name: Write '1' to myid file
+  copy:
+    content: '1'
+    dest: "{{ zookeeper_data_dirs }}/myid"
+    owner: zookeeper
+    group: zookeeper
+
+- name: Create zookeeper configuration file in /opt/zookeeper/conf
+  template:
+    src: "zoo.conf.j2"
+    dest: /opt/zookeeper/conf/zoo.cfg
+    owner: zookeeper
+    group: zookeeper
+  notify: Restart zookeeper
+
+- name: Create zookeeper SystemD unit configuration in /etc/systemd/system/zookeeper.service
+  template:
+    src: "zookeeper.service.j2"
+    dest: /etc/systemd/system/zookeeper.service
+  notify: Restart zookeeper
+
+- name: Enable and start zookeeper Service
+  service:
+    name: "zookeeper"
+    enabled: yes
+    state: started
+
+- meta: flush_handlers
+
+- name: Wait for zookeeper to be running
+  shell: 
+    chdir: "/opt/zookeeper/bin"
+    cmd: "bash zkServer.sh status"
+  retries: 12
+  delay: 5
+  register: zkServerLoop
+  until: "zkServerLoop.stdout.find('Mode: leader') != -1 or zkServerLoop.stdout.find('Mode: follower') != -1 or zkServerLoop.stdout.find('Mode: standalone') != -1"
+
