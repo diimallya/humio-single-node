@@ -1,6 +1,7 @@
 - name: Uninstall humio, kafka and zookeeper services
   hosts: all
-  remote_user: ubuntu
+  remote_user: root
+  become: true
   vars:
     kafka_log_dirs: "/var/log/kafka"
     kafka_data_dirs: "/var/kafka-data"
