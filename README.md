@@ -4,7 +4,7 @@ Installer for single node humio server.
 
 ## Installation
 
-The Ansible script provided here is to setup single node humio server on **Ubuntu** platform. Ansible has to be installed on a control node and following command has to be executed to run the playbook which installs all pre-requisites required for humio i.e java, zookeeper and kafka and then installs humio software.
+The Ansible script provided here is to setup single node humio server on **Ubuntu** platform. Ansible has to be installed on a control node and following command has to be executed to run the playbook which installs all pre-requisites required for humio i.e java, zookeeper and kafka and then installs humio software. The playbook uses `humio.java` role avaialble in ansible galaxy to install java.
 
 ```bash
 ansible-playbook setup-humio.yml
@@ -59,5 +59,5 @@ An example `setup-humio.yml` playbook to install a single node humio server with
 
 ```
 ### Uninstall Humio
-An example `remove-humio.yml` playbook is provided to uninstall humio, followed by kafa and zookeeper which was installed as part of the `setup-humio.yml` playbook. If role variables were customized during humio setup, those have to be provided for `remove-humio.yml` playbook as well.
+An example `remove-humio.yml` playbook is provided to uninstall humio, followed by kafa and zookeeper which were installed as part of the `setup-humio.yml` playbook. If role variables were customized during humio setup, those have to be provided during uninstallation as well.
 
