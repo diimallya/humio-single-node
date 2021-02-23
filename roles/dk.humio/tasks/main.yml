@@ -21,6 +21,7 @@
     group: humio
     shell: /bin/false
     system: true
+    create_home: no
 
 - name: "Create required directories for humio."
   file:

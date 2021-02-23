@@ -20,6 +20,8 @@
     name: zookeeper 
     group: zookeeper
     system: true
+    shell: /bin/false
+    create_home: no
 
 - name: Download and unzip zookeeper in /opt/
   unarchive:

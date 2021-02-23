@@ -20,6 +20,8 @@
     name: kafka 
     group: kafka
     system: true
+    shell: /bin/false
+    create_home: no
 
 - name: Download and unzip kafka in /opt/
   unarchive:
