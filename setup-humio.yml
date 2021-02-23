@@ -6,5 +6,3 @@
     - role: roles/dk.zookeeper
     - role: roles/dk.kafka
     - role: roles/dk.humio
-
-    
