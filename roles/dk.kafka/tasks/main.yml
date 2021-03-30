@@ -1,14 +1,9 @@
 ---
 # tasks file for dk.kafka
 - name: Update all packages to their latest version
-  apt:
+  package:
     name: "*"
     state: latest
-
-- name: Upgrade all packages
-  apt:
-    update_cache: yes
-    upgrade: yes
 
 - name: create kafka group
   group: 
