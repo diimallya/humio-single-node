@@ -7,6 +7,7 @@
 - name: add Azul Systems Java apt repository
   apt_repository:
     repo: deb http://repos.azulsystems.com/{{ ansible_distribution|lower }} stable main
+    update_cache: yes
     state: present
 
 - name: install JDK via apt
